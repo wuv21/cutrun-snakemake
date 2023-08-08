@@ -1,0 +1,10 @@
+__default__:
+  - "-q normal"
+
+align_actual:
+  - "-q denovo"
+  - "-M 160000"
+
+align_ecoli:
+  - "-q denovo"
+  - "-M 120000"

@@ -1,0 +1,44 @@
+paths:
+  fastq_dir: ""
+  ecoli_ref_dir: ""
+  ref_dir: ""
+  denylist: ""
+  picardExe: "~/pkg/picard.jar"
+
+out_dirs:
+  out: "outs" # need to implement into settings...currently not used.
+
+general:
+  run_modes:
+    withEColiNormalization: True # boolean
+    autoloadSamplesRecursively: True
+
+  threads:
+    align: 12
+    sortBam: 8
+    compileStats: 8
+    index: 12
+
+  memory:
+    align: 120000
+    sortBam: 50000
+
+samples_auto:
+  conditions:
+    samples: ["jlat10-6"]
+    reps: [1, 2, 3]
+    histones: ["A", "B", "C", "D"]
+    cellPrep: ["C", "N"]
+  bcl2fastqSampleID: 
+    - type: "append"
+      field: "samples"
+    - type: "product"
+      field: ["reps", "histones"]
+    - type: "groupedProduct"
+      field: "cellPrep"
+      groupBy: "histones"
+  
+  conditionDelimiter: "_"
+  fileSuffix: "001.fastq.gz"
+
+samples_detailed:
