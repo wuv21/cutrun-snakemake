@@ -42,11 +42,12 @@ def generateCombo(prev, step, stepN, conditions):
     return(conditions[step["field"]])
 
   elif op == "append":
+    newlist = []
     pass
 
   elif op == "product":
     selectCondList = [conditions[x] for x in step["field"]]
-
+    
     return(list(itertools.product(prev, *selectCondList)))
 
   elif op == "groupedProduct" and prev != None:
@@ -74,28 +75,27 @@ def final_output(modes):
   if not os.path.exists(inputPaths["ref_dir"]):
     raise Exception("No genome reference exists.")
 
-  # outs
-  
   # generate auto sample naming
   if modes["autoloadSamplesRecursively"]:
     conditions = config["samples_auto"]["conditions"]
     bclSampleIds = config["samples_auto"]["bcl2fastqSampleID"]
-    
+    sampleIndexingStart = config["samples_auto"]["sampleIndexingStart"]
+
     if bclSampleIds != None:
-      #orderedList = [conditions[k] for k in bclSampleIds]
-      
       combs = []
       for i, step in enumerate(bclSampleIds):
         combs = generateCombo(combs, step, i, conditions)
-
+        print(combs)
       
-      print(combs)
-      #combs = itertools.product(*orderedList)
-      # illumina index numbering is 1-index
-      combs = [x + ("S" + str(i + 1),) for i, x in enumerate(combs)]
       
-    
-    finalCombs = [config["samples_auto"]["conditionDelimiter"].join(map(lambda a: str(a), x)) for x in combs]
+      combs2 = []
+      for i, x in enumerate(combs):
+        if type(x) is not tuple and type(x) is not list:
+          x = (x,)
+        
+        combs2.append(x + ("S" + str(i + sampleIndexingStart),))
+      
+    finalCombs = [config["samples_auto"]["conditionDelimiter"].join(map(lambda a: str(a), x)) for x in combs2]
 
   else:
     raise Exception("I'm sorry :( This functionality isn't ready yet")
